@@ -588,7 +588,7 @@ Node n3 { 4, &n2 };
 Here is what happens when each object is pushed off the stack:
 1. ```n1``` destructor called on n1, and its next node is deleted off heap
 2. ```n2``` now a nullptr so nothing happens
-3. ```n3``` undefined behaviour/crash since n2 is being deleted
+3. ```n3``` undefined behaviour or crash since n2 is being deleted
 
 To solve this issue, we use encapsulation by introducing a **wrapper class**.
 ```cpp
@@ -600,4 +600,27 @@ public:
     int ith(int i);
     ~List();
 };
+
+struct List::Node {
+  int data;
+  Node * next;
+  Node (int data, Node * next) : data {data}, next {next} {}
+  ~Node() { delete next; }
+};
+
+List::~List() {
+  delete l;
+}
+
+void list::addToFront(int n) {
+  l = new Node(n, l);
+}
+
+int List::ith(int i) {
+  Node * cur = l;
+  for (int j=0; j < i && cur; ++j) {
+    cur = cur->next;
+    return cur->data;
+  }
+}
 ```
