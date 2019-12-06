@@ -62,3 +62,166 @@ delete p; // value of p is undefined
 
 Notice that the value of ```p``` is undefined after we free its memory. The undefined pointer vars are called **dangling pointers**. It is good practice to set these pointers to ```NULL```.
 
+```NULL``` is actually the number 0 which can lead to ambiguity. We can resolve this problem by using the null pointer: ```nullptr```. It is not 0 and can be used anywhere we use ```NULL```.
+
+# Dynamic vs. Automatic Variables
+* Dynamic variables:
+  * Created with ```new``` operator
+  * Created and destroyed while program runs
+  * Stored on heap
+* Automatic vars/local vars:
+  * declared within function definition
+  * automatically created when function is declared
+  * destroyed when call ends
+  * not dynamic
+
+# Typedef Operator
+```typedef``` operator to define an alias for any type name or definition. It is usually placed outside the body of main so that it is available to the entire program.
+
+It can be used to rename pointers, such as:
+```cpp
+typedef int * IntPtr;
+IntPtr p; // equivalent to int * p;
+```
+
+# Arrow Operator and this Pointer
+
+## Arrow Operator
+**arrow operator** ```->``` combines dereferencing a pointer to a class/struct object and calling its member.
+```cpp
+Record * p;
+p = new Record;
+p->number = 2001; // same as (*p).number
+p->grade = 'A'; // same as (*p).grade
+```
+
+## this Pointer
+```this``` pointer represents a pointer pointing to the containing object. For example,
+```cpp
+class P {
+public:
+    P(int m);
+private:
+    int m;
+};
+
+P::P(int m) {
+    // m referes to argument
+    // to get object's m, we use "this"
+    this->m = m;
+}
+```
+
+# Shallow vs. Deep Copies
+* **Shallow Copy**
+  * copy contents of member vars from one object to the other
+  * default assignment and copy constructors
+  * fine if not pointers involved
+* **Deep Copy**
+  * pointers & dynamic memory is involved
+  * creates copies of what each member var is pointing to
+  * creates a separate but identical copy
+  * must dereference pointer variable to get the data for copying
+  * must write an overloaded assignment operator or copy constructor
+
+# Resource Acquisition Is Initialization (RAII) Idiom
+Consider the following example:
+```cpp
+void f() {
+    MyClass * p = new MyClass;
+    MyClass mc;
+    try {
+        y();
+    }
+    catch {
+        delete p;
+        throw;
+    }
+    doSomething();
+    delete p;
+}
+```
+
+This method is tedious and error prone (duplication of code). Instead of using pointers, we should use stack-allocated objects as much as possible as C++ guarantees that the destructors of stack-allocated objects will run.
+
+The **RAII idiom** states that every resource should be wrapped in a stack-allocated object, where destructor deletes it. This can be seen with file I/O: ```ifstream f{"file"};```. The acquisition of the resource happens by initializaing the object ```f```. When ```f``` gets popped off the stack, the filestream is closed. The RAII idiom can be implemented via **smart pointers**, included in ```<memory>```
+
+# Smart Pointers
+**Smart pointers** - wrapper classes for pointers pointing to dynamic memory
+
+## Unique Pointers
+```cpp
+class std::unique_ptr<T>
+```
+The **unique pointer** holds a pointer to an object of type ```T```. It guarantees that only one object holds that pointer, i.e. you cannot apply the copy constructor or copy assignment. it supports ```operator []``` and array initalization. It is used to model composition relationship.
+```cpp
+auto p = std::make_unique<C>();
+unique_ptr<C> q = p; // ERROR, cannot have multiple pointers pointing to same object
+```
+
+However, you can use move semantics to transfer ownership of the pointer with ```std::move(ptr)```. The pointer that the unique pointer holds will be deleted when:
+1. unique pointer is popped off the stack, calling the destructor which deletes the pointer
+2. unique pointer is assigned to another pointer via ```operator =```
+
+This provides exception safety to classes/functions that handle dynamic objects by guaranteeing deletion upon exit.
+```cpp
+template<typename T>
+class unique_ptr {
+    T* ptr;
+public:
+    unique_ptr(T * p) : ptr {p} {}
+    ~unique_ptr() { delete ptr; }
+    unique_ptr(unique_ptr<T> & other) = delete;
+    unique_ptr(unique_ptr<T> && other) : ptr{ other.ptr} {
+        other.ptr = nullptr;
+    }
+    unique_ptr<T> & operator=(const unique_ptr<T> && other) {
+        using std::swap;
+        swap(ptr, other.ptr);
+        return *this;
+    }
+    T & operator*() { return *ptr; }
+};
+```
+
+## Shared Pointers
+```cpp
+class std::shared_ptr<T> 
+```
+**shared pointers** work in the same way as unique pointers, with the only difference being that we can have multiple shared pointers with the same pointer.
+```cpp
+auto p1 = std::make_shared<MyClass>();
+if(...) {
+    auto p2 = p1; //p2 has the same pointer has p1
+} // p2 is popped bbut object is NOT deleted
+```
+
+Shared pointers keep a count of how many pointers are sharing the pointer. Shared pointers will only delete the pointer once the count of shared pointers is zero. This can lead to a shared pointer not deleting its pointer even after the program exits if there is a cyclic dependency between shared pointers.
+```cpp
+class A {
+    shared_ptr<A> ptr;
+};
+std::shared_ptr<A> a1 = std::make_shared<A>();
+std::shared_ptr<A> a2 = std::make_shared<A>();
+a1->ptr = a2;
+a2->ptr = a1;
+exit(0); // memory leak
+```
+
+A memory leak occurs in the above example because when the program tries to delete a1, it is kept alive by ```a2->ptr``` which is, in turn kept alive by ```a1->ptr```. An even simpler example:
+```cpp
+std::shared_ptr<A> a = std::make_shared<A>();
+a->ptr = a; // never dies
+```
+
+### Dangers of Shared Pointers
+1. if you have both raw and smart pointers to the same piece of heap memory then you might not realize when the memory is released
+2. if you use raw pointers to create 2 smart pointers, they have independent count values and most certainly will lead to double free errors
+
+## Weak Pointers
+```cpp
+class std::weak_ptr<T>
+```
+**weak pointers** are similar to shared pointers but they don't count towards the shared count. It is used to:
+* implement temporary ownership of a shared_ptr
+* prevent cyclic ownership in shared_ptr
