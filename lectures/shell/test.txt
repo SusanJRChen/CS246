@@ -1,0 +1,8 @@
+apple
+$pple
+banana
+orange
+pears
+peach
+hello world
+apple apple orange banana
