@@ -1,2 +1,4 @@
 prog
 .DS_store
+.vscode
+.vscode/*
