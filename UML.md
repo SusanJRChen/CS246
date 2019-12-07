@@ -20,4 +20,3 @@
 
 * numbers on either side of arrow to represent the multiplicity relationship
 * order: class name, member vars, member functions
-

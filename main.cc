@@ -4,28 +4,23 @@
 #include <memory>
 using namespace std;
 
-void printVec(vector<int> vec) {
-    for (int el: vec) {
-        cout << el << " ";
-    }
-    cout << endl;
-}
-
-class Obj {
+class Top {
 public:
-    Obj() { cout << "Obj created" << endl; }
-    Obj(int a) { cout << "Obj created with int " << endl; }
-    ~Obj() { cout << "Obj " << this << " destroyed" << endl; }
-    void print() { cout << "Obj at " << this << endl; }
+    virtual ~Top() {}
+    virtual void f() { cout << "Top called" << endl; }
 };
 
-void print(unique_ptr<Obj> obj) { obj->print(); }
+// Left::f() > Top::f()
+class Left : virtual public Top {
+public:
+    void f() { cout << "Left called" << endl; }
+};
+
+class Right : virtual public Top {};
+
+class Bottom: public Left, public Right {};
 
 int main() {
-    Obj * raw = new Obj(1);
-    weak_ptr<Obj> shobj;
-    {
-        // unique_ptr<Obj> shared = make_unique<Obj>();
-    }
-    return 0;
+    Bottom b;
+    b.f(); // calls Left::f();
 }
