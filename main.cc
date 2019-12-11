@@ -4,29 +4,23 @@
 #include <memory>
 using namespace std;
 
-class Pet {
+class NoMilk {
 public:
-    Pet() {}
-    ~Pet() {}
-    string name;
-    virtual void print() const {};
-};
-class Dog : public Pet {
-public:
-    Dog() {}
-    ~Dog() {}
-    string breed;
-    void print() const {}; // virtual
+int i;
+    NoMilk(int i) : i {i} {
+        cout << i << " created" << endl;
+    }
+    ~NoMilk() {
+        cout << i << "des" << endl;
+    }
 };
 
-int main() {
-    Pet *ppet;
-    Dog *pdog;
-    pdog->name = "Tiny";
-    pdog->breed = "Great Dane";
-    ppet = pdog;
-    cout << ppet->name << endl;
-    pdog = static_cast<Dog*>(ppet);
-    cout << pdog->breed << endl;
-    // ppet->print(); // accesses breed field
+void f() { vector<NoMilk> v(1, 1); }
+void g() { vector<NoMilk *> v(1, new NoMilk(2)); }
+void h() { vector<shared_ptr<NoMilk>> v(1, make_shared<NoMilk>(3)); }
+
+int main () {
+    f();
+    g();
+    h();
 }
