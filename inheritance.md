@@ -204,11 +204,11 @@ When casting back from ```B``` to ```C```, since the original object was a ```C`
 When comparing ```bp == cp```, ```cp``` is implicitly converted to a ```B*``` since upcasting is always allowed (vs. downcasting), thus the result is true.
 
 # Diamond Inheritance
-![aggregation](assets/diamond1.png)
+![diamond1](assets/diamond1.png)
 
 When you have multiple base classes and those base classes have a common base class, you will have 2 copies of the original base class. The inheritance diagram, therefore, looks more like:
 
-![aggregation](assets/diamond2.png)
+![diamond2](assets/diamond2.png)
 
 ```cpp
 class Top {
