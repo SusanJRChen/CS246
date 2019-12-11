@@ -1,4 +1,3 @@
-# Control Flow
 # If Statements
 Chooses between alternative actions based on value of Boolean expression.
 ```cpp
@@ -10,6 +9,7 @@ if (Boolean_Expression_1) {
   Action3();
 }
 ```
+
 Enclosing braces within each branch can be omitted if there is only one statement provided. Enclosing braces are used for **compound statements**. The ```else``` statement is also optional if not needed. If statements can also be **nested**.
 
 ## Ternary Operator
