@@ -1,5 +1,4 @@
 # Streams
-# Streams
 **Stream** - an object that transports and formats characters of fixed width.
 
 ## Stream Libraries
