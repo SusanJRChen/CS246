@@ -1,4 +1,3 @@
-# C++ Basics
 # Variables
 **variables** - used to store a value. The name of a variable is called an **identifier**, which are case-sensitive.
 
