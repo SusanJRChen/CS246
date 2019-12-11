@@ -154,17 +154,3 @@ Dog *pdog = dynamic_cast<Pet*>(ppet);
 ```dynamic_cast``` informs us if it fails by returning ```nullptr```. Keep the following in mind when downcasting:
 1. Keep track of member fields so you know the info to be added is present
 2. Member functions must be virtual since ```dynamic_cast``` uses the virtual functions info to perform cast
-
-# Late Binding Implementation
-C++ implements late binding by creating **virtual function table**. This is created for a class that has one or more member functions that are virtual. It has a pointer for each virtual member function. If the inherited virtual function is not changed, the table points to the definition in the parent class.
-
-If the virtual function has a new definition, the pointer points to that definition. A ```vptr``` is placed in each class with virtual functions which points to eh ```vtable``` of that object.
-
-When a virtual function call is made through a base class pointer, the compiler inserts code to fetch the ```vptr```. When there is no virtual function, the size of the object is equal to the size of its members. If there is one or more virtual functions, the object's size includes an extra size of a void pointer (points to ```vtable```). 
-
-once the object with virtual functions is created, the vptr is initialized to point to the starting address of the ```vtable```.
-
-## Steps In Calling Virtual Method
-1. Follow ```vptr``` to the vtable
-2. Fetch the pointer to the actual method from the ```vtable```
-3. Follow the function pointer and call the function

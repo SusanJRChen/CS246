@@ -4,18 +4,29 @@
 #include <memory>
 using namespace std;
 
-void g(int *p) {
-    cout << p << endl;
-}
-
-void f(const int *p) {
-    cout << p <<endl;
-    g((int *)p);
-    cout << p <<endl;
-
-}
+class Pet {
+public:
+    Pet() {}
+    ~Pet() {}
+    string name;
+    virtual void print() const {};
+};
+class Dog : public Pet {
+public:
+    Dog() {}
+    ~Dog() {}
+    string breed;
+    void print() const {}; // virtual
+};
 
 int main() {
-    int p = 1;
-    f(&p);
+    Pet *ppet;
+    Dog *pdog;
+    pdog->name = "Tiny";
+    pdog->breed = "Great Dane";
+    ppet = pdog;
+    cout << ppet->name << endl;
+    pdog = static_cast<Dog*>(ppet);
+    cout << pdog->breed << endl;
+    // ppet->print(); // accesses breed field
 }
