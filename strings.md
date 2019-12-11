@@ -7,10 +7,12 @@ There are 2 types of strings:
 ```cpp
 #include <string>
 
-std::string s1, s2, s3;
-s1 = "ab"; // Assignment
-s2 = "cd";
-s3 = s1 + s2; // Concatenation. "abcd"
+int main() {
+    std::string s1, s2, s3;
+    s1 = "ab"; // Assignment
+    s2 = "cd";
+    s3 = s1 + s2; // Concatenation. "abcd"
+}
 ```
 
 # String Operations
