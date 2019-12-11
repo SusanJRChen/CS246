@@ -37,6 +37,7 @@ public:
   void output();  // member function
 };  // Don't forget semicolon
 ```
+
 Declaring objects is the same as other variables, e.g. ```DayofYear today, birthday;```
 
 Objects include:
