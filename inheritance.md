@@ -311,7 +311,7 @@ int main() {
 
 Each virtual base of a given type refers to the same object, no matter where it appears in the hierarchy. The object diagram for ```Bottom``` looks something like this:
 
-![aggregation](assets/virtualbase.png)
+![virtual](assets/virtualbase.png)
 
 The ```Left``` and ```Right``` subobjects each have a pointer to the shared ```Top``` subobject. Note that because there is only a single instance of the ```Top``` object, the constructor is not called by the classes that inherit from it (```Left``` and ```Right```) as this would mean that the constructor is called multiple times. Instead, the constructor is called by the most-derived class ```Bottom```. The most derived class must initialize the virtual base.
 
