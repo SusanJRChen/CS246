@@ -1,5 +1,3 @@
-# Arrays & Vectors
-
 # Declaring and Accessing Arrays
 **Array** - a collection of data of the same type. Declaration of an array of size n is:
 ```cpp
